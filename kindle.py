@@ -4,9 +4,11 @@
 import collections
 import msgpack
 import os
+import re
 
 BOUNDARY = u"==========\r\n"
 DATA_FILE = u"clips.msgpack"
+INPUT_DIR = u"/Volumes/Kindle/documents"
 OUTPUT_DIR = u"output"
 
 
@@ -25,7 +27,7 @@ def get_clip(section):
         return
 
     clip['book'] = lines[0]
-    position = lines[1][26:lines[1].rfind('-')]
+    position = re.findall(r'\d+', lines[1])[1]
     if not position:
         return
 
@@ -35,18 +37,18 @@ def get_clip(section):
     return clip
 
 
-def export_txt(clips):
+def export_md(clips):
     """
     Export each book's clips to single text.
     """
     for book in clips:
         lines = []
         for pos in sorted(clips[book]):
-            lines.append(clips[book][pos].encode('utf-8'))
+            lines.append((clips[book][pos] + ' **P%s**' %pos).encode('utf-8'))
 
-        filename = os.path.join(OUTPUT_DIR, u"%s.txt" % book)
+        filename = os.path.join(OUTPUT_DIR, u"%s.md" % book)
         with open(filename, 'w') as f:
-            f.write("\n\n--\n\n".join(lines))
+            f.write("\n\n".join(lines))
 
 
 def load_clips():
@@ -74,7 +76,7 @@ def main():
     clips.update(load_clips())
 
     # extract clips
-    sections = get_sections(u'My Clippings.txt')
+    sections = get_sections(os.path.join(INPUT_DIR, u'My Clippings.txt'))
     for section in sections:
         clip = get_clip(section)
         if clip:
@@ -85,7 +87,7 @@ def main():
 
     # save/export clips
     save_clips(clips)
-    export_txt(clips)
+    export_md(clips)
 
 
 if __name__ == '__main__':

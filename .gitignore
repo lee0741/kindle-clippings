@@ -1,4 +1,4 @@
 *.pyc
-*.txt
 clips.msgpack
 .DS_Store
+*~
