@@ -9,7 +9,7 @@ import re
 BOUNDARY = u"==========\r\n"
 DATA_FILE = u"clips.msgpack"
 INPUT_DIR = u"/Volumes/Kindle/documents"
-OUTPUT_DIR = u"output"
+OUTPUT_DIR = os.environ['HOME'] + u"/Dropbox/Notes/Kindle"
 
 
 def get_sections(filename):
